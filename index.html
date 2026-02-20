@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corvallis Garden Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --soil: #3d2b1f;
+    --bark: #6b4c35;
+    --moss: #4a6741;
+    --sage: #7a9e6e;
+    --fern: #9fbf8c;
+    --mist: #d4e4cc;
+    --cream: #f7f2e8;
+    --petal: #e8d5b7;
+    --harvest: #c8843a;
+    --berry: #7a3b5a;
+    --sky: #6b9ab8;
+    --fog: #b8c8d4;
+    --ink: #1e1a16;
+    --stone: #8a8070;
+    
+    --shadow-sm: 0 2px 8px rgba(61,43,31,0.08);
+    --shadow-md: 0 4px 20px rgba(61,43,31,0.12);
+    --shadow-lg: 0 8px 40px rgba(61,43,31,0.18);
+    --radius: 12px;
+    --radius-lg: 20px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(ellipse at 20% 0%, rgba(122,158,110,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(107,154,184,0.10) 0%, transparent 60%);
+  }
+
+  /* TOP NAV */
+  header {
+    background: var(--soil);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--mist);
+    font-size: 1.35rem;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon { font-size: 1.5rem; }
+  .logo-sub { 
+    font-size: 0.7rem; 
+    color: var(--sage); 
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  nav { display: flex; gap: 4px; }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--fog);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 18px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+  .nav-btn.active { background: var(--moss); color: var(--mist); }
+
+  /* MAIN LAYOUT */
+  main { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+  .view { display: none; animation: fadeIn 0.3s ease; }
+  .view.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* PAGE HEADERS */
+  .page-header {
+    margin-bottom: 32px;
+  }
+  .page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--soil);
+    font-weight: 700;
+  }
+  .page-header p {
+    color: var(--stone);
+    font-size: 0.95rem;
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  /* MONTH SELECTOR */
+  .month-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .month-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .month-pill {
+    background: white;
+    border: 1.5px solid var(--petal);
+    color: var(--bark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 20px;
+    transition: all 0.18s;
+    letter-spacing: 0.01em;
+  }
+  .month-pill:hover { border-color: var(--sage); color: var(--moss); background: var(--mist); }
+  .month-pill.active { background: var(--moss); border-color: var(--moss); color: white; box-shadow: var(--shadow-sm); }
+
+  /* CHECKLIST SECTIONS */
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+  }
+
+  .task-section {
+    background: white;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(61,43,31,0.06);
+    transition: box-shadow 0.2s;
+  }
+  .task-section:hover { box-shadow: var(--shadow-md); }
+
+  .section-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .section-header .icon { font-size: 1.1rem; }
+  .section-header .count {
+    margin-left: auto;
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .s-planning { background: linear-gradient(135deg, #7a9e6e, #5d8150); color: white; }
+  .s-soil { background: linear-gradient(135deg, #8b6914, #a07c30); color: white; }
+  .s-pruning { background: linear-gradient(135deg, #6b4c35, #8a6248); color: white; }
+  .s-pest { background: linear-gradient(135deg, #7a3b5a, #9c5070); color: white; }
+  .s-planting { background: linear-gradient(135deg, #4a7a8a, #6b9ab8); color: white; }
+
+  .task-list { padding: 8px 0; }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .task-item:last-child { border-bottom: none; }
+  .task-item:hover { background: rgba(74,103,65,0.04); }
+
+  .task-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--fern);
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .task-item.checked .task-checkbox {
+    background: var(--moss);
+    border-color: var(--moss);
+  }
+  .task-item.checked .task-checkbox::after {
+    content: '✓';
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .task-text-wrap { flex: 1; }
+  .task-text {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--ink);
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  .task-item.checked .task-text {
+    color: var(--stone);
+    text-decoration: line-through;
+    text-decoration-color: var(--fern);
+  }
+  .task-timestamp {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--sage);
+    margin-top: 3px;
+  }
+
+  /* PROGRESS BAR */
+  .month-progress {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(61,43,31,0.06);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .progress-text { font-size: 0.875rem; color: var(--stone); white-space: nowrap; }
+  .progress-text strong { color: var(--soil); font-size: 1.1rem; }
+  .progress-bar { flex: 1; height: 8px; background: var(--mist); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--sage), var(--moss)); border-radius: 4px; transition: width 0.4s ease; }
+  .progress-pct { font-family: 'DM Mono', monospace; font-size: 0.85rem; color: var(--moss); font-weight: 500; white-space: nowrap; }
+
+  /* ===== CALENDAR VIEW ===== */
+  .calendar-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+  }
+  @media (max-width: 900px) {
+    .calendar-layout { grid-template-columns: 1fr; }
+  }
+
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .cal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--soil);
+  }
+  .cal-arrow {
+    background: white;
+    border: 1.5px solid var(--petal);
+    color: var(--bark);
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.18s;
+  }
+  .cal-arrow:hover { background: var(--moss); border-color: var(--moss); color: white; }
+
+  .cal-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .cal-day-name {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--stone);
+    padding: 6px 0;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .cal-cell {
+    background: white;
+    border-radius: 10px;
+    min-height: 80px;
+    padding: 6px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+  .cal-cell:hover { border-color: var(--fern); background: rgba(212,228,204,0.3); }
+  .cal-cell.today { border-color: var(--moss); background: rgba(74,103,65,0.06); }
+  .cal-cell.other-month { opacity: 0.35; }
+  .cal-cell.selected { border-color: var(--harvest); background: rgba(200,132,58,0.08); }
+
+  .cal-date {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--bark);
+    margin-bottom: 4px;
+  }
+  .cal-cell.today .cal-date {
+    background: var(--moss);
+    color: white;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+  }
+
+  .cal-events { display: flex; flex-direction: column; gap: 2px; }
+  .cal-event-dot {
+    font-size: 0.62rem;
+    padding: 1px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+  .ev-plant { background: #d4ecd4; color: #2a6a2a; }
+  .ev-transplant { background: #dce8f0; color: #2a5870; }
+  .ev-harvest { background: #f5e4c8; color: #7a4010; }
+  .ev-bloom { background: #f0d4e4; color: #6a1a3a; }
+  .ev-note { background: #e8e8e0; color: #444; }
+
+  /* SIDEBAR */
+  .cal-sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+  .sidebar-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(61,43,31,0.06);
+  }
+  .sidebar-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--soil);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--petal);
+  }
+
+  .event-form { display: flex; flex-direction: column; gap: 10px; }
+
+  .form-row { display: flex; flex-direction: column; gap: 4px; }
+  .form-row label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    border: 1.5px solid var(--petal);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--ink);
+    background: var(--cream);
+    transition: border-color 0.18s;
+    outline: none;
+  }
+  .form-row input:focus,
+  .form-row select:focus,
+  .form-row textarea:focus { border-color: var(--sage); background: white; }
+  .form-row textarea { resize: vertical; min-height: 60px; }
+
+  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .type-btn {
+    border: 1.5px solid var(--petal);
+    background: white;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+    color: var(--bark);
+  }
+  .type-btn:hover { border-color: var(--sage); }
+  .type-btn.sel-plant { background: #d4ecd4; border-color: #4a8a4a; color: #2a5a2a; }
+  .type-btn.sel-transplant { background: #dce8f0; border-color: #4a70a0; color: #1a406a; }
+  .type-btn.sel-harvest { background: #f5e4c8; border-color: #c88030; color: #7a4010; }
+  .type-btn.sel-bloom { background: #f0d4e4; border-color: #c060a0; color: #6a1a3a; }
+  .type-btn.sel-note { background: #e8e8e0; border-color: #888870; color: #333; }
+
+  .btn-primary {
+    background: var(--moss);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .btn-primary:hover { background: var(--soil); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-danger {
+    background: none;
+    border: 1px solid #e0a0a0;
+    color: #c05050;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-danger:hover { background: #ffe0e0; }
+
+  /* EVENT LOG */
+  .event-log { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; }
+  .event-log::-webkit-scrollbar { width: 4px; }
+  .event-log::-webkit-scrollbar-track { background: transparent; }
+  .event-log::-webkit-scrollbar-thumb { background: var(--petal); border-radius: 2px; }
+
+  .event-log-item {
+    border-radius: 10px;
+    padding: 10px 12px;
+    border-left: 3px solid;
+    background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .event-log-item.plant { border-color: #4a8a4a; background: #f5fbf5; }
+  .event-log-item.transplant { border-color: #4a70a0; background: #f0f5fb; }
+  .event-log-item.harvest { border-color: #c88030; background: #fdf8f0; }
+  .event-log-item.bloom { border-color: #c060a0; background: #fdf0f8; }
+  .event-log-item.note { border-color: #888; background: #f8f8f5; }
+
+  .eli-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .eli-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .eli-date { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--stone); }
+  .eli-plant-name { font-weight: 600; font-size: 0.85rem; color: var(--soil); margin-top: 3px; }
+  .eli-notes { font-size: 0.78rem; color: var(--stone); margin-top: 2px; line-height: 1.4; }
+
+  .selected-date-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--sage);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--stone);
+    font-size: 0.875rem;
+  }
+  .empty-state .em-icon { font-size: 2.5rem; margin-bottom: 10px; opacity: 0.6; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--soil);
+    color: var(--mist);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ===== RESOURCES ===== */
+  .res-filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .res-filter-btn {
+    background: white;
+    border: 1.5px solid var(--petal);
+    color: var(--bark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 7px 16px;
+    border-radius: 20px;
+    transition: all 0.18s;
+  }
+  .res-filter-btn:hover { border-color: var(--sage); color: var(--moss); }
+  .res-filter-btn.active { background: var(--moss); border-color: var(--moss); color: white; box-shadow: var(--shadow-sm); }
+
+  .res-section { margin-bottom: 40px; }
+  .res-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--soil);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--petal);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .res-section-title .sec-icon { font-size: 1.4rem; }
+
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .res-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(61,43,31,0.06);
+    transition: all 0.22s;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+  .res-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--fern);
+  }
+
+  .res-card-thumb {
+    height: 8px;
+  }
+  .thumb-ext  { background: linear-gradient(90deg, #4a6741, #7a9e6e); }
+  .thumb-osu  { background: linear-gradient(90deg, #cc4400, #ff7744); }
+  .thumb-seed { background: linear-gradient(90deg, #8b5e14, #c8943a); }
+  .thumb-video { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+  .thumb-local { background: linear-gradient(90deg, #2980b9, #5dade2); }
+  .thumb-pest { background: linear-gradient(90deg, #7a3b5a, #c06090); }
+  .thumb-soil { background: linear-gradient(90deg, #5d4037, #8d6e63); }
+  .thumb-general { background: linear-gradient(90deg, #4a7a8a, #6b9ab8); }
+
+  .res-card-body { padding: 16px 18px; flex: 1; display: flex; flex-direction: column; }
+
+  .res-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .res-card-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--soil);
+    line-height: 1.35;
+  }
+  .res-type-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge-website { background: #e8f5e9; color: #2a6a2a; }
+  .badge-video   { background: #fdecea; color: #c0392b; }
+  .badge-pdf     { background: #fff3e0; color: #8a4a00; }
+  .badge-channel { background: #fce4ec; color: #ad1457; }
+
+  .res-card-desc {
+    font-size: 0.825rem;
+    color: var(--stone);
+    line-height: 1.55;
+    flex: 1;
+    margin-bottom: 12px;
+  }
+  .res-card-tags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .res-tag {
+    font-size: 0.68rem;
+    background: var(--mist);
+    color: var(--moss);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-weight: 500;
+  }
+  .res-card-footer {
+    padding: 10px 18px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .res-domain {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--stone);
+  }
+  .res-arrow {
+    font-size: 0.75rem;
+    color: var(--sage);
+    font-weight: 600;
+  }
+
+  .res-featured {
+    background: linear-gradient(135deg, var(--soil) 0%, #5a3d28 100%);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    color: var(--mist);
+    box-shadow: var(--shadow-lg);
+  }
+  .res-featured-icon { font-size: 3rem; flex-shrink: 0; }
+  .res-featured h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: white;
+    margin-bottom: 6px;
+  }
+  .res-featured p {
+    font-size: 0.875rem;
+    color: var(--fog);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .res-featured-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .res-feat-link {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--mist);
+    text-decoration: none;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.18s;
+  }
+  .res-feat-link:hover { background: var(--moss); border-color: var(--moss); color: white; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    header { padding: 0 16px; }
+    main { padding: 20px 16px; }
+    .checklist-grid { grid-template-columns: 1fr; }
+    .cal-cell { min-height: 54px; }
+    .cal-event-dot { display: none; }
+    .res-grid { grid-template-columns: 1fr; }
+    .res-featured { flex-direction: column; gap: 16px; padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-icon">🌱</span>
+    <div>
+      Corvallis Garden Journal
+      <span class="logo-sub">Willamette Valley · Zone 8b</span>
+    </div>
+  </div>
+  <nav>
+    <button class="nav-btn active" onclick="showView('checklist')">☑ Checklists</button>
+    <button class="nav-btn" onclick="showView('calendar')">📅 Calendar</button>
+    <button class="nav-btn" onclick="showView('resources')">📚 Resources</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===== CHECKLIST VIEW ===== -->
+  <div id="view-checklist" class="view active">
+    <div class="page-header">
+      <h1>Monthly Task Checklists</h1>
+      <p>Click any task to mark it complete — timestamps are recorded automatically.</p>
+    </div>
+
+    <div class="month-nav">
+      <div class="month-pills" id="month-pills"></div>
+    </div>
+
+    <div class="month-progress" id="month-progress">
+      <div class="progress-text"><strong id="prog-done">0</strong> / <span id="prog-total">0</span> tasks</div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="progress-pct" id="prog-pct">0%</div>
+    </div>
+
+    <div class="checklist-grid" id="checklist-grid"></div>
+  </div>
+
+  <!-- ===== CALENDAR VIEW ===== -->
+  <div id="view-calendar" class="view">
+    <div class="page-header">
+      <h1>Garden Calendar</h1>
+      <p>Log planting, transplanting, harvest, and bloom events on the calendar.</p>
+    </div>
+
+    <div class="calendar-layout">
+      <div>
+        <div class="cal-nav">
+          <button class="cal-arrow" onclick="changeCalMonth(-1)">←</button>
+          <div class="cal-title" id="cal-title"></div>
+          <button class="cal-arrow" onclick="changeCalMonth(1)">→</button>
+        </div>
+        <div class="cal-grid-header">
+          <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div>
+          <div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div>
+          <div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div>
+          <div class="cal-day-name">Sat</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+
+      <div class="cal-sidebar">
+        <div class="sidebar-card">
+          <h3>✏️ Log an Event</h3>
+          <span class="selected-date-label" id="selected-date-label">No date selected — click a day</span>
+          <div class="event-form">
+            <div class="form-row">
+              <label>Event Type</label>
+              <div class="type-grid" id="type-grid">
+                <button class="type-btn" data-type="plant" onclick="selectType(this)">🌱 Plant</button>
+                <button class="type-btn" data-type="transplant" onclick="selectType(this)">🪴 Transplant</button>
+                <button class="type-btn" data-type="harvest" onclick="selectType(this)">🧺 Harvest</button>
+                <button class="type-btn" data-type="bloom" onclick="selectType(this)">🌸 Bloom</button>
+                <button class="type-btn" data-type="note" onclick="selectType(this)" style="grid-column:1/-1">📝 Note</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label>Plant / Subject</label>
+              <input type="text" id="ev-plant" placeholder="e.g. Tomatoes, Dahlias…">
+            </div>
+            <div class="form-row">
+              <label>Notes</label>
+              <textarea id="ev-notes" placeholder="Variety, quantity, observations…"></textarea>
+            </div>
+            <button class="btn-primary" onclick="addCalEvent()">Add to Calendar</button>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <h3>📋 Recent Events</h3>
+          <div class="event-log" id="event-log"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RESOURCES VIEW ===== -->
+  <div id="view-resources" class="view">
+    <div class="page-header">
+      <h1>Gardening Resources</h1>
+      <p>Curated websites, videos, and guides for Willamette Valley and Pacific Northwest gardeners.</p>
+    </div>
+
+    <!-- Featured Banner -->
+    <div class="res-featured">
+      <div class="res-featured-icon">🌿</div>
+      <div>
+        <h2>OSU Extension Service — Your Best Local Resource</h2>
+        <p>Oregon State University's Extension Service is the gold standard for Willamette Valley gardening advice. All recommendations are research-based and specific to Oregon's climate, soils, and pests. Free to access.</p>
+        <div class="res-featured-links">
+          <a class="res-feat-link" href="https://extension.oregonstate.edu/gardening" target="_blank">🌐 Gardening Hub</a>
+          <a class="res-feat-link" href="https://extension.oregonstate.edu/mg/benton" target="_blank">📍 Benton County MG</a>
+          <a class="res-feat-link" href="https://catalog.extension.oregonstate.edu/" target="_blank">📄 Publications Catalog</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="res-filter-bar">
+      <button class="res-filter-btn active" onclick="filterRes('all', this)">All Resources</button>
+      <button class="res-filter-btn" onclick="filterRes('website', this)">🌐 Websites</button>
+      <button class="res-filter-btn" onclick="filterRes('video', this)">▶ Videos</button>
+      <button class="res-filter-btn" onclick="filterRes('channel', this)">📺 Channels</button>
+      <button class="res-filter-btn" onclick="filterRes('pdf', this)">📄 Guides & PDFs</button>
+    </div>
+
+    <div id="res-sections"></div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const TASK_DATA = {
+  January: {
+    'Planning & Prep': [
+      'Review seed catalogs and order seeds for the coming season.',
+      'Plan crop rotations and garden layout on paper.',
+      'Inventory and clean garden tools; sharpen pruners and hoes.',
+      'Check stored bulbs and tubers for rot; discard soft ones.'
+    ],
+    'Soil & Beds': [
+      'Avoid working saturated clay soil to prevent compaction.',
+      'Top-dress beds with compost; let winter rains incorporate it.',
+      'Check raised beds for settling; refill as needed.'
+    ],
+    Pruning: [
+      'Prune fruit trees during dormancy — ideal before buds swell.',
+      'Remove dead/damaged branches from deciduous shrubs.',
+      'Cut ornamental grasses back to 4–6 inches.'
+    ],
+    'Pest & Disease Control': [
+      'Apply dormant oil spray to fruit trees for mite/aphid eggs.',
+      'Remove slug egg clusters hiding under debris.',
+      'Scout for root weevil damage on rhododendrons.'
+    ],
+    Planting: [
+      'Start onion seeds indoors under lights (6–8 weeks early).',
+      'Plant bare-root roses, fruit trees during mild spells.',
+      'Sow sweet peas indoors for strong transplants.'
+    ]
+  },
+  February: {
+    'Planning & Prep': [
+      'Harden off seedlings started in January.',
+      'Order bare-root strawberries for early spring planting.',
+      'Clean and sanitize seed-starting trays and grow lights.'
+    ],
+    'Soil & Beds': [
+      'Test soil pH — Willamette Valley soils tend to be acidic.',
+      'Continue adding compost as weather allows.',
+      'Use cloches or cold frames to warm soil for early plantings.'
+    ],
+    Pruning: [
+      'Finish dormant pruning of fruit trees before buds break.',
+      'Prune blueberry bushes; remove old canes.',
+      'Prune climbing roses; remove canes older than 3 years.'
+    ],
+    'Pest & Disease Control': [
+      'Apply copper fungicide to prevent peach leaf curl — critical window.',
+      'Continue slug monitoring; use iron phosphate baits.',
+      'Check for aphid colonies on fruit tree branch tips.'
+    ],
+    Planting: [
+      'Direct sow peas outdoors in mild spells.',
+      'Start broccoli, cauliflower, and cabbage indoors.',
+      'Plant bare-root strawberries when ground is workable.',
+      'Sow spinach and kale under row cover.'
+    ]
+  },
+  March: {
+    'Planning & Prep': [
+      'Begin a garden journal to track planting dates and varieties.',
+      'Set up drip irrigation before the dry season.',
+      'Purchase slug bait, fertilizer, and row covers.'
+    ],
+    'Soil & Beds': [
+      'Begin light cultivation when soil crumbles (not clumps).',
+      'Incorporate balanced fertilizer into vegetable beds.',
+      'Mulch pathways to reduce mud and compaction.'
+    ],
+    Pruning: [
+      'Prune forsythia after it blooms.',
+      'Deadhead early bulbs; leave foliage intact.',
+      'Cut back lavender lightly; avoid cutting old wood.'
+    ],
+    'Pest & Disease Control': [
+      'Deploy slug traps as temperatures warm.',
+      'Scout for aphids on brassica seedlings.',
+      'Watch for early powdery mildew; improve air circulation.'
+    ],
+    Planting: [
+      'Transplant brassica seedlings started indoors.',
+      'Direct sow beets, carrots, chard, lettuce, radishes.',
+      'Plant potatoes — mid-March is typical in Corvallis.',
+      'Start tomatoes and peppers indoors (8–10 weeks before last frost).'
+    ]
+  },
+  April: {
+    'Planning & Prep': [
+      'Harden off tomato, pepper, and squash seedlings.',
+      'Set up tomato cages and trellis structures.',
+      'Check irrigation systems for leaks.'
+    ],
+    'Soil & Beds': [
+      'Apply 2–3 inch mulch layer around established plants.',
+      'Top-dress perennial beds with compost.',
+      'Aerate lawn areas if compaction is an issue.'
+    ],
+    Pruning: [
+      'Prune spring-flowering shrubs after they bloom.',
+      'Pinch back flower seedlings for bushy growth.',
+      'Cut back frost-damaged growth on tender perennials.'
+    ],
+    'Pest & Disease Control': [
+      'Peak slug season — continue vigilant control.',
+      'Monitor for cabbage worm; apply row covers or Bt.',
+      'Watch for aphids on roses and vegetables.',
+      'Apply neem oil to susceptible plants preventively.'
+    ],
+    Planting: [
+      'After last frost, transplant tomatoes and peppers.',
+      'Direct sow beans, corn, cucumbers after soil reaches 60°F.',
+      'Plant container-grown perennials and shrubs.',
+      'Plant dahlia tubers directly in the ground.'
+    ]
+  },
+  May: {
+    'Planning & Prep': [
+      'Begin succession planting of lettuce and greens every 2–3 weeks.',
+      'Set up shade cloth for areas that overheat.',
+      'Prepare supports for pole beans and cucumbers.'
+    ],
+    'Soil & Beds': [
+      'Keep beds consistently mulched as temperatures rise.',
+      'Side-dress heavy feeders with compost or fertilizer.',
+      'Check soil moisture as Corvallis transitions to dry season.'
+    ],
+    Pruning: [
+      'Pinch suckers from indeterminate tomato varieties weekly.',
+      'Deadhead spring-blooming perennials.',
+      'Thin apple and pear fruit when dime-sized.'
+    ],
+    'Pest & Disease Control': [
+      'Set pheromone traps for codling moth in apple trees.',
+      'Check squash plants for cucumber beetles.',
+      'Monitor for spider mites during warm, dry spells.',
+      'Apply diatomaceous earth around vulnerable plants.'
+    ],
+    Planting: [
+      'Direct sow winter squash, melons, and pumpkins.',
+      'Plant out warm-season herbs: basil, summer savory.',
+      'Transplant annual flower starts for summer color.',
+      'Plant sweet potato slips when soil exceeds 65°F.'
+    ]
+  },
+  June: {
+    'Planning & Prep': [
+      'Sow seeds for fall brassicas (broccoli, cabbage, kale) to transplant July.',
+      'Note which crops performed well for planning.',
+      'Set up drip irrigation timers for the dry season.'
+    ],
+    'Soil & Beds': [
+      'Water deeply and infrequently (1–2 inches/week).',
+      'Hoe weeds regularly while small; prevent seeding.',
+      'Apply additional mulch as needed to maintain 2–3 inch depth.'
+    ],
+    Pruning: [
+      'Continue pinching tomato suckers weekly.',
+      'Trim back overgrown herbs to keep them productive.',
+      'Prune early-fruiting canes on raspberries after harvest.',
+      'Shear spent lavender flowers to encourage rebloom.'
+    ],
+    'Pest & Disease Control': [
+      'Monitor for early blight on tomatoes; apply copper if needed.',
+      'Hand-pick tomato hornworms in the evening.',
+      'Inspect squash for vine borer eggs at base of stems.',
+      'Treat powdery mildew with baking soda or potassium bicarbonate.'
+    ],
+    Planting: [
+      'Sow a second round of beans and summer squash.',
+      'Direct sow beets and carrots for fall harvest.',
+      'Plant fall brassica starts if started earlier.',
+      'Sow buckwheat cover crop in any cleared beds.'
+    ]
+  },
+  July: {
+    'Planning & Prep': [
+      'Order garlic for fall planting — local seed garlic sells out quickly.',
+      'Start seeds for fall garden: kale, chard, Asian greens.',
+      'Review and repair any irrigation equipment.'
+    ],
+    'Soil & Beds': [
+      'Water deeply 2–3 times per week during heat waves.',
+      'Keep mulch thick to reduce evaporation.',
+      'Avoid cultivating during peak heat.'
+    ],
+    Pruning: [
+      'Summer-prune fruit trees lightly to control size.',
+      'Remove spent strawberry runners unless propagating.',
+      'Deadhead flowering perennials to extend bloom.'
+    ],
+    'Pest & Disease Control': [
+      'Watch for late blight on tomatoes and potatoes.',
+      'Treat aphid colonies with insecticidal soap.',
+      'Set yellow sticky traps for whitefly monitoring.',
+      'Scrape squash bug egg masses from under leaves.'
+    ],
+    Planting: [
+      'Transplant fall brassica starts into the garden.',
+      'Last chance to sow winter squash.',
+      'Direct sow turnips and rutabagas for fall harvest.',
+      'Plant fall lettuce in afternoon shade.'
+    ]
+  },
+  August: {
+    'Planning & Prep': [
+      'Begin transitioning garden from summer to fall crops.',
+      'Collect and dry seeds from open-pollinated varieties.',
+      'Prepare beds being vacated for fall planting.'
+    ],
+    'Soil & Beds': [
+      'Amend cleared beds with compost before fall planting.',
+      'Continue deep watering — August is driest month in Corvallis.',
+      'Work organic matter into soil while dry and workable.'
+    ],
+    Pruning: [
+      'Prune out old fruiting canes of summer raspberries.',
+      'Deadhead perennials or allow seed heads to form for birds.',
+      'Cut back leggy annual flowers for a fall flush of bloom.'
+    ],
+    'Pest & Disease Control': [
+      'Apply final copper spray to tomatoes with disease pressure.',
+      'Trap European earwigs with rolled damp newspaper.',
+      'Check stored onions and garlic for rot.'
+    ],
+    Planting: [
+      'Sow spinach, arugula, mache, and cold-hardy greens.',
+      'Plant overwintering onion sets or seeds.',
+      'Sow crimson clover or Austrian winter peas as cover crop.',
+      'Start biennial flowers (foxglove, hollyhock) for next year.'
+    ]
+  },
+  September: {
+    'Planning & Prep': [
+      'Bring in final summer harvests before first frost.',
+      'Begin curing winter squash in warm, dry conditions.',
+      'Prepare cold frames and row covers for winter crops.'
+    ],
+    'Soil & Beds': [
+      'Reduce irrigation as rains return and temperatures cool.',
+      'Add final compost layer as summer crops are removed.',
+      'Plant cover crops in all cleared beds.'
+    ],
+    Pruning: [
+      'Cut back perennials that have finished blooming.',
+      'Prune hedges for a final tidying before winter.',
+      'Begin cutting back spent vegetable plants.'
+    ],
+    'Pest & Disease Control': [
+      'Slug activity increases with moisture — resume baiting.',
+      'Remove all diseased plant material; do not compost.',
+      'Rake fallen apple and pear leaves to reduce overwintering disease.'
+    ],
+    Planting: [
+      'Plant spring-flowering bulbs: tulips, daffodils, crocuses.',
+      'Set out overwintering kale, chard, and collard starts.',
+      'Sow hardy annual wildflowers for early spring bloom.',
+      'Plant garlic if ordered early.'
+    ]
+  },
+  October: {
+    'Planning & Prep': [
+      'Dig and store frost-sensitive bulbs before hard frost.',
+      'Drain and winterize irrigation systems.',
+      'Clean and oil garden tools before winter storage.'
+    ],
+    'Soil & Beds': [
+      'Complete cover crop planting in all cleared beds.',
+      'Rake and shred fallen leaves for mulch or compost.',
+      'Test soil pH and add lime if needed — fall is ideal.'
+    ],
+    Pruning: [
+      'Cut back hostas and perennials after frost kills foliage.',
+      'Prune roses minimally in fall; major pruning waits for late winter.',
+      'Remove spent annual plants and clear debris.'
+    ],
+    'Pest & Disease Control': [
+      'Apply dormant copper spray to fruit trees as leaves fall.',
+      'Clean up fallen fruit around trees to reduce disease.',
+      'Place beer traps to monitor slugs as rains intensify.'
+    ],
+    Planting: [
+      'Plant garlic — prime window for Corvallis. 2" deep, 6" apart.',
+      'Continue planting spring bulbs throughout the month.',
+      'Plant bare-root trees and shrubs as available.',
+      'Sow overwintering spinach and mache under cold frames.'
+    ]
+  },
+  November: {
+    'Planning & Prep': [
+      'Complete all winter prep before sustained rainy weather.',
+      'Record notes on best-performing varieties this season.',
+      'Check cold storage for appropriate temp and humidity.'
+    ],
+    'Soil & Beds': [
+      'Avoid walking on saturated soil.',
+      'Ensure all beds have cover crops or mulch.',
+      'Continue adding leaves and organic matter to compost.'
+    ],
+    Pruning: [
+      'Hold off on major pruning of trees until January.',
+      'Remove remaining diseased material from fruit trees and roses.',
+      'Cut back ornamental grasses if not done yet.'
+    ],
+    'Pest & Disease Control': [
+      'Slugs very active with returning rains — maintain bait.',
+      'Apply horticultural oil to fruit trees during dry spells.',
+      'Check stored root vegetables monthly for rot.'
+    ],
+    Planting: [
+      'Continue planting spring bulbs early in the month.',
+      'Plant bare-root strawberries and raspberries during mild spells.',
+      'Protect tender plants with frost cloth as temperatures drop.'
+    ]
+  },
+  December: {
+    'Planning & Prep': [
+      'Review the garden year — successes, failures, changes.',
+      'Browse seed catalogs and create wish lists for next year.',
+      'Inspect stored bulbs and tubers; remove any rotting items.'
+    ],
+    'Soil & Beds': [
+      'The garden rests — avoid soil disturbance in wet conditions.',
+      'Top-dress beds with straw or leaves if not yet done.',
+      'Check cold frames and low tunnels after storms for damage.'
+    ],
+    Pruning: [
+      'Prune fruit trees on dry days if needed.',
+      'Remove crossing branches from shrubs when clearly visible.',
+      'Cut evergreen boughs for holiday arrangements.'
+    ],
+    'Pest & Disease Control': [
+      'Continue slug monitoring on mild, wet nights.',
+      'Inspect for vine weevil grubs around vulnerable perennials.',
+      'Scout for scale insects on overwintering woody plants.'
+    ],
+    Planting: [
+      'Plant garlic if any spots were missed in October/November.',
+      'Sow winter-hardy peas under protection.',
+      'Order seeds early — popular varieties sell out quickly.'
+    ]
+  }
+};
+
+const SECTION_META = {
+  'Planning & Prep': { icon: '🗒️', cls: 's-planning' },
+  'Soil & Beds':     { icon: '🪱', cls: 's-soil' },
+  'Pruning':         { icon: '✂️', cls: 's-pruning' },
+  'Pest & Disease Control': { icon: '🐛', cls: 's-pest' },
+  'Planting':        { icon: '🌿', cls: 's-planting' }
+};
+
+const EVENT_META = {
+  plant:      { label: '🌱 Plant',      badge: 'ev-plant' },
+  transplant: { label: '🪴 Transplant', badge: 'ev-transplant' },
+  harvest:    { label: '🧺 Harvest',    badge: 'ev-harvest' },
+  bloom:      { label: '🌸 Bloom',      badge: 'ev-bloom' },
+  note:       { label: '📝 Note',       badge: 'ev-note' }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let currentMonth = new Date().getMonth(); // 0-indexed
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let selectedDate = null;
+let selectedType = null;
+
+// Load from localStorage
+let taskState = JSON.parse(localStorage.getItem('gj_tasks') || '{}');
+let calEvents = JSON.parse(localStorage.getItem('gj_events') || '[]');
+
+function saveState() {
+  localStorage.setItem('gj_tasks', JSON.stringify(taskState));
+}
+function saveEvents() {
+  localStorage.setItem('gj_events', JSON.stringify(calEvents));
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  // Find and activate the correct nav button
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + v + "'")) {
+      btn.classList.add('active');
+    }
+  });
+  if (v === 'calendar') renderCalendar();
+}
+
+// ============================================================
+// CHECKLIST
+// ============================================================
+function buildMonthPills() {
+  const container = document.getElementById('month-pills');
+  MONTH_NAMES.forEach((m, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'month-pill' + (i === currentMonth ? ' active' : '');
+    btn.textContent = m.slice(0, 3);
+    btn.onclick = () => {
+      currentMonth = i;
+      document.querySelectorAll('.month-pill').forEach(el => el.classList.remove('active'));
+      btn.classList.add('active');
+      renderChecklist();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function taskKey(month, section, idx) {
+  return `${month}|${section}|${idx}`;
+}
+
+function renderChecklist() {
+  const monthName = MONTH_NAMES[currentMonth];
+  const data = TASK_DATA[monthName];
+  const grid = document.getElementById('checklist-grid');
+  grid.innerHTML = '';
+
+  let total = 0, done = 0;
+
+  for (const [section, tasks] of Object.entries(data)) {
+    const meta = SECTION_META[section];
+    let sectionDone = 0;
+    tasks.forEach((_, i) => {
+      const k = taskKey(monthName, section, i);
+      if (taskState[k]) { done++; sectionDone++; }
+      total++;
+    });
+
+    const card = document.createElement('div');
+    card.className = 'task-section';
+    card.innerHTML = `
+      <div class="section-header ${meta.cls}">
+        <span class="icon">${meta.icon}</span>
+        ${section}
+        <span class="count">${sectionDone}/${tasks.length}</span>
+      </div>
+      <div class="task-list" id="tl-${section.replace(/\W/g,'_')}"></div>
+    `;
+    grid.appendChild(card);
+
+    const list = card.querySelector('.task-list');
+    tasks.forEach((task, i) => {
+      const k = taskKey(monthName, section, i);
+      const item = document.createElement('div');
+      item.className = 'task-item' + (taskState[k] ? ' checked' : '');
+      item.innerHTML = `
+        <div class="task-checkbox"></div>
+        <div class="task-text-wrap">
+          <div class="task-text">${task}</div>
+          ${taskState[k] ? `<div class="task-timestamp">✓ ${taskState[k]}</div>` : ''}
+        </div>
+      `;
+      item.onclick = () => toggleTask(monthName, section, i, item, card);
+      list.appendChild(item);
+    });
+  }
+
+  updateProgress(done, total);
+}
+
+function toggleTask(month, section, idx, itemEl, cardEl) {
+  const k = taskKey(month, section, idx);
+  if (taskState[k]) {
+    delete taskState[k];
+    itemEl.classList.remove('checked');
+    itemEl.querySelector('.task-timestamp')?.remove();
+  } else {
+    const now = new Date();
+    const ts = now.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+      + ' · ' + now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+    taskState[k] = ts;
+    itemEl.classList.add('checked');
+    let tsEl = itemEl.querySelector('.task-timestamp');
+    if (!tsEl) {
+      tsEl = document.createElement('div');
+      tsEl.className = 'task-timestamp';
+      itemEl.querySelector('.task-text-wrap').appendChild(tsEl);
+    }
+    tsEl.textContent = '✓ ' + ts;
+    showToast('Task completed! ✓');
+  }
+  saveState();
+  // Update count in header
+  const sectionData = TASK_DATA[month][section];
+  let sc = 0;
+  sectionData.forEach((_, i) => { if (taskState[taskKey(month, section, i)]) sc++; });
+  cardEl.querySelector('.count').textContent = `${sc}/${sectionData.length}`;
+
+  // Recalc progress
+  let total = 0, done = 0;
+  for (const [sec, tasks] of Object.entries(TASK_DATA[month])) {
+    tasks.forEach((_, i) => {
+      total++;
+      if (taskState[taskKey(month, sec, i)]) done++;
+    });
+  }
+  updateProgress(done, total);
+}
+
+function updateProgress(done, total) {
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('prog-done').textContent = done;
+  document.getElementById('prog-total').textContent = total;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+}
+
+// ============================================================
+// CALENDAR
+// ============================================================
+function renderCalendar() {
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay = new Date(calYear, calMonth + 1, 0);
+  const today = new Date();
+
+  document.getElementById('cal-title').textContent =
+    MONTH_NAMES[calMonth] + ' ' + calYear;
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  const startDow = firstDay.getDay(); // 0=Sun
+  const prevMonthLast = new Date(calYear, calMonth, 0).getDate();
+
+  // Prev month filler
+  for (let i = startDow - 1; i >= 0; i--) {
+    addCell(grid, prevMonthLast - i,
+      new Date(calYear, calMonth - 1, prevMonthLast - i), true);
+  }
+  // Current month
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const date = new Date(calYear, calMonth, d);
+    addCell(grid, d, date, false);
+  }
+  // Next month filler
+  const endDow = lastDay.getDay();
+  for (let d = 1; d <= 6 - endDow; d++) {
+    addCell(grid, d, new Date(calYear, calMonth + 1, d), true);
+  }
+
+  renderEventLog();
+}
+
+function addCell(grid, dayNum, date, otherMonth) {
+  const today = new Date();
+  const isToday = !otherMonth &&
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear();
+
+  const dateStr = date.toISOString().slice(0, 10);
+  const isSelected = selectedDate === dateStr;
+
+  const cell = document.createElement('div');
+  cell.className = 'cal-cell' +
+    (otherMonth ? ' other-month' : '') +
+    (isToday ? ' today' : '') +
+    (isSelected ? ' selected' : '');
+
+  const dateDiv = document.createElement('div');
+  dateDiv.className = 'cal-date';
+  dateDiv.textContent = dayNum;
+  cell.appendChild(dateDiv);
+
+  // Events for this day
+  const dayEvents = calEvents.filter(e => e.date === dateStr);
+  const evContainer = document.createElement('div');
+  evContainer.className = 'cal-events';
+  dayEvents.slice(0, 3).forEach(ev => {
+    const dot = document.createElement('div');
+    dot.className = 'cal-event-dot ' + EVENT_META[ev.type].badge;
+    dot.textContent = ev.plant || ev.type;
+    evContainer.appendChild(dot);
+  });
+  if (dayEvents.length > 3) {
+    const more = document.createElement('div');
+    more.className = 'cal-event-dot ev-note';
+    more.textContent = `+${dayEvents.length - 3} more`;
+    evContainer.appendChild(more);
+  }
+  cell.appendChild(evContainer);
+
+  cell.onclick = () => selectCalDate(dateStr, date);
+  grid.appendChild(cell);
+}
+
+function selectCalDate(dateStr, dateObj) {
+  selectedDate = dateStr;
+  const label = dateObj.toLocaleDateString('en-US',
+    { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  document.getElementById('selected-date-label').textContent = label;
+  renderCalendar();
+}
+
+function changeCalMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function selectType(btn) {
+  document.querySelectorAll('.type-btn').forEach(b => {
+    b.className = 'type-btn';
+  });
+  selectedType = btn.dataset.type;
+  btn.classList.add('sel-' + selectedType);
+}
+
+function addCalEvent() {
+  if (!selectedDate) { showToast('Please click a date on the calendar first.'); return; }
+  if (!selectedType) { showToast('Please select an event type.'); return; }
+  const plant = document.getElementById('ev-plant').value.trim();
+  const notes = document.getElementById('ev-notes').value.trim();
+  if (!plant && selectedType !== 'note') { showToast('Please enter a plant or subject name.'); return; }
+
+  const now = new Date();
+  const ev = {
+    id: Date.now(),
+    date: selectedDate,
+    type: selectedType,
+    plant: plant,
+    notes: notes,
+    loggedAt: now.toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric',
+      hour:'2-digit', minute:'2-digit' })
+  };
+  calEvents.unshift(ev);
+  saveEvents();
+
+  // Reset form
+  document.getElementById('ev-plant').value = '';
+  document.getElementById('ev-notes').value = '';
+  document.querySelectorAll('.type-btn').forEach(b => b.className = 'type-btn');
+  selectedType = null;
+
+  renderCalendar();
+  showToast('Event logged! 📅');
+}
+
+function renderEventLog() {
+  const log = document.getElementById('event-log');
+  if (calEvents.length === 0) {
+    log.innerHTML = '<div class="empty-state"><div class="em-icon">📋</div>No events logged yet.<br>Click a date to get started.</div>';
+    return;
+  }
+  log.innerHTML = '';
+  calEvents.slice(0, 30).forEach(ev => {
+    const meta = EVENT_META[ev.type];
+    const item = document.createElement('div');
+    item.className = 'event-log-item ' + ev.type;
+    item.innerHTML = `
+      <div class="eli-top">
+        <span class="eli-badge ${meta.badge}">${meta.label}</span>
+        <span class="eli-date">${ev.date}</span>
+        <button class="btn-danger" onclick="deleteEvent(${ev.id})">✕</button>
+      </div>
+      ${ev.plant ? `<div class="eli-plant-name">${ev.plant}</div>` : ''}
+      ${ev.notes ? `<div class="eli-notes">${ev.notes}</div>` : ''}
+      <div class="eli-date" style="margin-top:4px">Logged: ${ev.loggedAt}</div>
+    `;
+    log.appendChild(item);
+  });
+}
+
+function deleteEvent(id) {
+  calEvents = calEvents.filter(e => e.id !== id);
+  saveEvents();
+  renderCalendar();
+  showToast('Event removed.');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// RESOURCES
+// ============================================================
+const RESOURCES = [
+  // ---- LOCAL & REGIONAL ----
+  {
+    section: 'Local & Regional',
+    sectionIcon: '📍',
+    thumb: 'thumb-local',
+    title: 'Benton County Master Gardeners',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'Your closest expert resource. OSU-trained volunteers answer plant questions, run a plant clinic, and host events in Corvallis. Check the website for clinics and workshops.',
+    tags: ['Corvallis', 'local', 'plant clinic'],
+    domain: 'extension.oregonstate.edu/mg/benton',
+    url: 'https://extension.oregonstate.edu/mg/benton'
+  },
+  {
+    section: 'Local & Regional',
+    sectionIcon: '📍',
+    thumb: 'thumb-local',
+    title: 'Territorial Seed Company',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'Founded in Cottage Grove, OR — just down the road from Corvallis. All varieties are trialed in the Willamette Valley. Excellent for finding seeds suited to our specific climate.',
+    tags: ['seeds', 'Willamette Valley', 'organic'],
+    domain: 'territorialseed.com',
+    url: 'https://www.territorialseed.com'
+  },
+  {
+    section: 'Local & Regional',
+    sectionIcon: '📍',
+    thumb: 'thumb-local',
+    title: 'OSU Vegetable Planting Guide',
+    type: 'pdf',
+    badge: 'badge-pdf',
+    desc: 'Official OSU Extension planting dates, spacing, and depth guide calibrated for western Oregon. One of the most-used references for Willamette Valley vegetable gardeners.',
+    tags: ['planting dates', 'vegetables', 'western Oregon'],
+    domain: 'catalog.extension.oregonstate.edu',
+    url: 'https://catalog.extension.oregonstate.edu/ec871'
+  },
+  {
+    section: 'Local & Regional',
+    sectionIcon: '📍',
+    thumb: 'thumb-local',
+    title: 'Nichols Garden Nursery',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'Albany, OR herb and seed specialist with deep roots in the Willamette Valley. Excellent selection of culinary herbs, unusual vegetables, and specialty seeds for PNW growers.',
+    tags: ['herbs', 'seeds', 'Albany OR'],
+    domain: 'nicholsgardennursery.com',
+    url: 'https://nicholsgardennursery.com'
+  },
+  {
+    section: 'Local & Regional',
+    sectionIcon: '📍',
+    thumb: 'thumb-local',
+    title: 'OSU Home Orchard Society',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'A great Pacific Northwest resource for fruit tree growers. Includes pruning guides, pest calendars, and variety recommendations for Oregon conditions.',
+    tags: ['fruit trees', 'orchard', 'pruning'],
+    domain: 'homeorchardsociety.org',
+    url: 'https://homeorchardsociety.org'
+  },
+
+  // ---- PEST & DISEASE ----
+  {
+    section: 'Pest & Disease Control',
+    sectionIcon: '🐛',
+    thumb: 'thumb-pest',
+    title: 'OSU Integrated Pest Management',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'Comprehensive IPM resource from OSU, covering identification and management of Pacific Northwest pests and diseases. Includes pest calendars and treatment thresholds.',
+    tags: ['IPM', 'pests', 'organic'],
+    domain: 'ipm.oregonstate.edu',
+    url: 'https://ipm.oregonstate.edu'
+  },
+  {
+    section: 'Pest & Disease Control',
+    sectionIcon: '🐛',
+    thumb: 'thumb-pest',
+    title: 'PNW Plant Disease Handbooks',
+    type: 'pdf',
+    badge: 'badge-pdf',
+    desc: 'The definitive guide to plant disease management in the Pacific Northwest, co-published by OSU, WSU, and UI. Free online access to hundreds of disease profiles.',
+    tags: ['disease', 'handbook', 'PNW'],
+    domain: 'pnwhandbooks.org',
+    url: 'https://pnwhandbooks.org/plantdisease'
+  },
+  {
+    section: 'Pest & Disease Control',
+    sectionIcon: '🐛',
+    thumb: 'thumb-pest',
+    title: 'Slugs in the Garden — OSU Guide',
+    type: 'pdf',
+    badge: 'badge-pdf',
+    desc: 'The #1 pest in Corvallis gets a dedicated OSU guide. Covers species identification, lifecycle, and control methods including iron phosphate baits, barriers, and trapping.',
+    tags: ['slugs', 'Corvallis', 'control'],
+    domain: 'catalog.extension.oregonstate.edu',
+    url: 'https://catalog.extension.oregonstate.edu/em9153'
+  },
+  {
+    section: 'Pest & Disease Control',
+    sectionIcon: '🐛',
+    thumb: 'thumb-pest',
+    title: 'How to Identify & Manage Garden Slugs',
+    type: 'video',
+    badge: 'badge-video',
+    desc: 'A practical video walkthrough on slug identification, damage recognition, and organic control strategies particularly relevant to Pacific Northwest gardens.',
+    tags: ['slugs', 'video', 'organic control'],
+    domain: 'youtube.com',
+    url: 'https://www.youtube.com/results?search_query=slug+control+pacific+northwest+garden'
+  },
+
+  // ---- SOIL ----
+  {
+    section: 'Soil Health & Composting',
+    sectionIcon: '🪱',
+    thumb: 'thumb-soil',
+    title: 'Improving Garden Soils with Organic Matter',
+    type: 'pdf',
+    badge: 'badge-pdf',
+    desc: 'Essential OSU Extension guide for working with Willamette Valley clay soils. Covers compost, cover crops, and amendments to build long-term soil health.',
+    tags: ['soil', 'compost', 'clay', 'amendments'],
+    domain: 'catalog.extension.oregonstate.edu',
+    url: 'https://catalog.extension.oregonstate.edu/ec1561'
+  },
+  {
+    section: 'Soil Health & Composting',
+    sectionIcon: '🪱',
+    thumb: 'thumb-soil',
+    title: 'Cover Crops for Home Gardens — OSU',
+    type: 'pdf',
+    badge: 'badge-pdf',
+    desc: 'OSU guide to selecting and using cover crops in western Oregon. Covers crimson clover, Austrian winter peas, annual ryegrass, buckwheat, and more — with seeding rates and timing.',
+    tags: ['cover crops', 'soil', 'winter'],
+    domain: 'catalog.extension.oregonstate.edu',
+    url: 'https://catalog.extension.oregonstate.edu/em9066'
+  },
+  {
+    section: 'Soil Health & Composting',
+    sectionIcon: '🪱',
+    thumb: 'thumb-soil',
+    title: 'Back to Eden Gardening Film',
+    type: 'video',
+    badge: 'badge-video',
+    desc: 'The classic documentary on wood chip mulch gardening. Highly relevant for Corvallis gardeners dealing with clay soil and summer drought — watch for the composting and water retention sections.',
+    tags: ['mulch', 'wood chips', 'documentary'],
+    domain: 'youtube.com',
+    url: 'https://www.youtube.com/watch?v=8pBjEMuD_pk'
+  },
+  {
+    section: 'Soil Health & Composting',
+    sectionIcon: '🪱',
+    thumb: 'thumb-soil',
+    title: 'Rodale Institute — Composting Guide',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'Comprehensive composting knowledge base covering hot and cold composting, vermicomposting, troubleshooting, and using finished compost in the garden.',
+    tags: ['compost', 'organic', 'soil building'],
+    domain: 'rodaleinstitute.org',
+    url: 'https://rodaleinstitute.org/education/composting/'
+  },
+
+  // ---- VIDEO CHANNELS ----
+  {
+    section: 'YouTube Channels to Follow',
+    sectionIcon: '📺',
+    thumb: 'thumb-video',
+    title: 'Gary Pilarchik — The Rusted Garden',
+    type: 'channel',
+    badge: 'badge-channel',
+    desc: 'Extremely practical vegetable gardening channel with deep dives into seed starting, tomato growing, and pest management. Hundreds of how-to videos for home gardeners.',
+    tags: ['vegetables', 'tomatoes', 'seed starting'],
+    domain: 'youtube.com/@TheRustedGarden',
+    url: 'https://www.youtube.com/@TheRustedGarden'
+  },
+  {
+    section: 'YouTube Channels to Follow',
+    sectionIcon: '📺',
+    thumb: 'thumb-video',
+    title: 'Huw Richards — No-Dig Gardening',
+    type: 'channel',
+    badge: 'badge-channel',
+    desc: 'Champion of no-dig growing (great for clay soils like Corvallis!). Covers composting, raised beds, crop planning, and year-round growing in a temperate maritime climate similar to ours.',
+    tags: ['no-dig', 'compost', 'vegetables'],
+    domain: 'youtube.com/@HuwRichards',
+    url: 'https://www.youtube.com/@HuwRichards'
+  },
+  {
+    section: 'YouTube Channels to Follow',
+    sectionIcon: '📺',
+    thumb: 'thumb-video',
+    title: 'James Prigioni — Pruning & Fruit Trees',
+    type: 'channel',
+    badge: 'badge-channel',
+    desc: 'Outstanding channel for fruit tree training and pruning. Clear, detailed walkthroughs of apple, pear, and peach pruning — ideal for applying the January/February pruning tasks.',
+    tags: ['fruit trees', 'pruning', 'espalier'],
+    domain: 'youtube.com/@JamesPrigioni',
+    url: 'https://www.youtube.com/@JamesPrigioni'
+  },
+  {
+    section: 'YouTube Channels to Follow',
+    sectionIcon: '📺',
+    thumb: 'thumb-video',
+    title: 'OSU Extension Service Channel',
+    type: 'channel',
+    badge: 'badge-channel',
+    desc: 'Official Oregon State University Extension YouTube channel with webinars, gardening talks, and how-to videos produced specifically for Oregon conditions.',
+    tags: ['Oregon', 'OSU', 'local'],
+    domain: 'youtube.com/@OSUExtension',
+    url: 'https://www.youtube.com/@OSUExtension'
+  },
+  {
+    section: 'YouTube Channels to Follow',
+    sectionIcon: '📺',
+    thumb: 'thumb-video',
+    title: 'MIgardener — Beginner to Expert',
+    type: 'channel',
+    badge: 'badge-channel',
+    desc: 'One of the most popular vegetable gardening channels. Great for beginners through intermediate growers. Strong content on seed saving, companion planting, and soil building.',
+    tags: ['vegetables', 'beginner', 'seed saving'],
+    domain: 'youtube.com/@MIgardener',
+    url: 'https://www.youtube.com/@MIgardener'
+  },
+
+  // ---- GENERAL REFERENCE ----
+  {
+    section: 'General Reference',
+    sectionIcon: '📖',
+    thumb: 'thumb-general',
+    title: 'The Old Farmer\'s Almanac — Gardening',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'Classic planting calendars, frost date tools, companion planting charts, and moon gardening guides. Enter your zip code (97330) for Corvallis-specific frost dates and planting windows.',
+    tags: ['planting dates', 'frost dates', 'companion planting'],
+    domain: 'almanac.com/gardening',
+    url: 'https://www.almanac.com/gardening'
+  },
+  {
+    section: 'General Reference',
+    sectionIcon: '📖',
+    thumb: 'thumb-general',
+    title: 'Dave\'s Garden — PlantFiles',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'Massive community-driven plant database with growing information, photos, and reviews for thousands of plants. Useful for researching varieties before you buy.',
+    tags: ['plant database', 'variety research'],
+    domain: 'davesgarden.com',
+    url: 'https://davesgarden.com/guides/pf/'
+  },
+  {
+    section: 'General Reference',
+    sectionIcon: '📖',
+    thumb: 'thumb-general',
+    title: 'Cornell Vegetable Growing Guides',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'Detailed crop-by-crop growing guides from Cornell Cooperative Extension. Covers soil prep, planting, fertilizing, pest management, and harvest for all major vegetables.',
+    tags: ['vegetables', 'growing guides', 'reference'],
+    domain: 'vegetables.cornell.edu',
+    url: 'https://www.vegetables.cornell.edu/pest-management/home-gardening-guides/'
+  },
+  {
+    section: 'General Reference',
+    sectionIcon: '📖',
+    thumb: 'thumb-general',
+    title: 'What to Plant Now — Seasonal Planner',
+    type: 'website',
+    badge: 'badge-website',
+    desc: 'Interactive tool that tells you exactly what to plant, direct sow, or start indoors right now based on your location and the current date. Great for succession planting.',
+    tags: ['planner', 'seasonal', 'what to plant'],
+    domain: 'gardenate.com',
+    url: 'https://www.gardenate.com/'
+  },
+
+  // ---- SPECIFIC VIDEOS ----
+  {
+    section: 'Must-Watch Videos',
+    sectionIcon: '▶',
+    thumb: 'thumb-video',
+    title: 'Fruit Tree Pruning in January',
+    type: 'video',
+    badge: 'badge-video',
+    desc: 'Step-by-step winter pruning walkthrough for apple and pear trees — directly applicable to Corvallis January/February tasks. Covers scaffold selection, thinning cuts, and heading back.',
+    tags: ['pruning', 'fruit trees', 'January'],
+    domain: 'youtube.com',
+    url: 'https://www.youtube.com/results?search_query=apple+pear+tree+dormant+pruning+tutorial'
+  },
+  {
+    section: 'Must-Watch Videos',
+    sectionIcon: '▶',
+    thumb: 'thumb-video',
+    title: 'Tomato Seed Starting Indoors',
+    type: 'video',
+    badge: 'badge-video',
+    desc: 'Complete walkthrough from seeding to transplant-ready starts. Covers growing medium, lights, temperature, hardening off, and avoiding common failures like damping off.',
+    tags: ['tomatoes', 'seed starting', 'March'],
+    domain: 'youtube.com',
+    url: 'https://www.youtube.com/results?search_query=tomato+seed+starting+indoors+grow+lights'
+  },
+  {
+    section: 'Must-Watch Videos',
+    sectionIcon: '▶',
+    thumb: 'thumb-video',
+    title: 'Cover Crops for the Home Garden',
+    type: 'video',
+    badge: 'badge-video',
+    desc: 'Explains how, when, and why to use cover crops — critical for Corvallis gardeners managing clay soils and keeping beds productive through the rainy season.',
+    tags: ['cover crops', 'soil health', 'fall'],
+    domain: 'youtube.com',
+    url: 'https://www.youtube.com/results?search_query=cover+crops+home+vegetable+garden+tutorial'
+  },
+  {
+    section: 'Must-Watch Videos',
+    sectionIcon: '▶',
+    thumb: 'thumb-video',
+    title: 'Growing Garlic from Planting to Harvest',
+    type: 'video',
+    badge: 'badge-video',
+    desc: 'Full garlic growing guide covering variety selection, fall planting, spring care, and summer harvest. Garlic is a staple October task for Corvallis gardeners.',
+    tags: ['garlic', 'October planting', 'harvest'],
+    domain: 'youtube.com',
+    url: 'https://www.youtube.com/results?search_query=growing+garlic+from+planting+to+harvest'
+  },
+  {
+    section: 'Must-Watch Videos',
+    sectionIcon: '▶',
+    thumb: 'thumb-video',
+    title: 'Blueberry Pruning for Maximum Harvest',
+    type: 'video',
+    badge: 'badge-video',
+    desc: 'Blueberries thrive in the Willamette Valley\'s acidic soils. This video covers the February/March pruning that determines your harvest size — worth watching before picking up your loppers.',
+    tags: ['blueberries', 'pruning', 'February'],
+    domain: 'youtube.com',
+    url: 'https://www.youtube.com/results?search_query=blueberry+pruning+guide+home+garden'
+  },
+];
+
+let activeFilter = 'all';
+
+function filterRes(type, btn) {
+  activeFilter = type;
+  document.querySelectorAll('.res-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderResources();
+}
+
+function renderResources() {
+  const container = document.getElementById('res-sections');
+  container.innerHTML = '';
+
+  // Group by section
+  const sections = {};
+  RESOURCES.forEach(r => {
+    if (activeFilter !== 'all' && r.type !== activeFilter) return;
+    if (!sections[r.section]) sections[r.section] = { icon: r.sectionIcon, items: [] };
+    sections[r.section].items.push(r);
+  });
+
+  if (Object.keys(sections).length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="em-icon">🔍</div>No resources match this filter.</div>';
+    return;
+  }
+
+  for (const [sectionName, data] of Object.entries(sections)) {
+    const sec = document.createElement('div');
+    sec.className = 'res-section';
+    sec.innerHTML = `<div class="res-section-title"><span class="sec-icon">${data.icon}</span>${sectionName}</div>`;
+
+    const grid = document.createElement('div');
+    grid.className = 'res-grid';
+
+    data.items.forEach(r => {
+      const card = document.createElement('a');
+      card.className = 'res-card';
+      card.href = r.url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      card.innerHTML = `
+        <div class="res-card-thumb ${r.thumb}"></div>
+        <div class="res-card-body">
+          <div class="res-card-top">
+            <div class="res-card-title">${r.title}</div>
+            <span class="res-type-badge ${r.badge}">${r.type}</span>
+          </div>
+          <div class="res-card-desc">${r.desc}</div>
+          <div class="res-card-tags">${r.tags.map(t => `<span class="res-tag">${t}</span>`).join('')}</div>
+        </div>
+        <div class="res-card-footer">
+          <span class="res-domain">${r.domain}</span>
+          <span class="res-arrow">↗</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    sec.appendChild(grid);
+    container.appendChild(sec);
+  }
+}
+
+// Init resources on first render
+document.getElementById('view-resources').addEventListener('click', () => {}, { once: false });
+renderResources();
+
+buildMonthPills();
+renderChecklist();
+// Pre-select today for calendar
+const todayStr = new Date().toISOString().slice(0, 10);
+selectedDate = todayStr;
+</script>
+</body>
+</html>
